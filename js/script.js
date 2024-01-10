@@ -91,16 +91,24 @@ function createCommment(comment) {
 
 // Post a comment
 async function postComment(comment) {
-  const response = await fetch(`${url}/${postId}/comments`, {
-    method: "POST",
-    body: comment,
-    headers: {
-      "content-type": "application/json",
-    },
-  });
+  try {
+    const response = await fetch(`${url}/${postId}/comments`, {
+      method: "POST",
+      body: comment,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  const data = await response.json();
-  createCommment(data);
+    if (!response.ok) {
+      throw new Error(`Failed to post comment. Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    createCommment(data);
+  } catch (error) {
+    console.error("Error posting comment:", error);
+  }
 }
 
 if (!postId) {
